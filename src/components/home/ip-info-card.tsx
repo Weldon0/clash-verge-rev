@@ -1,9 +1,4 @@
-import {
-  LocationOnOutlined,
-  RefreshOutlined,
-  VisibilityOffOutlined,
-  VisibilityOutlined,
-} from '@mui/icons-material'
+import { LocationOnOutlined, RefreshOutlined } from '@mui/icons-material'
 import { Box, Button, IconButton, Skeleton, Typography } from '@mui/material'
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { useEffect } from 'foxact/use-abortable-effect'
@@ -11,7 +6,6 @@ import { useIntersection } from 'foxact/use-intersection'
 import type { XOR } from 'foxts/ts-xor'
 import {
   forwardRef,
-  memo,
   useCallback,
   useEffectEvent,
   useMemo,
@@ -21,47 +15,13 @@ import { useTranslation } from 'react-i18next'
 
 import { getIpInfo } from '@/services/api'
 import { useQuery } from '@/services/query-client'
-import getSystem from '@/utils/get-system'
 
 import { EnhancedCard } from './enhanced-card'
+import { IpInfoContent } from './ip-info-content'
 
 const IP_REFRESH_SECONDS = 300
 const COUNTDOWN_TICK_INTERVAL = 5_000
 const IP_INFO_CACHE_KEY = 'cv_ip_info_cache'
-
-const InfoItem = memo(({ label, value }: { label: string; value?: string }) => (
-  <Box sx={{ mb: 0.7, display: 'flex', alignItems: 'flex-start' }}>
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      sx={{ minwidth: 60, mr: 0.5, flexShrink: 0, textAlign: 'right' }}
-    >
-      {label}:
-    </Typography>
-    <Typography
-      variant="body2"
-      sx={{
-        ml: 0.5,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        wordBreak: 'break-word',
-        whiteSpace: 'normal',
-        flexGrow: 1,
-      }}
-    >
-      {value || 'Unknown'}
-    </Typography>
-  </Box>
-))
-
-const getCountryFlag = (countryCode: string | undefined) => {
-  if (!countryCode) return ''
-  const codePoints = countryCode
-    .toUpperCase()
-    .split('')
-    .map((char) => 127397 + char.charCodeAt(0))
-  return String.fromCodePoint(...codePoints)
-}
 
 type CountDownState = XOR<
   {
@@ -85,7 +45,11 @@ const IPInfoCardContainer = forwardRef<HTMLElement, React.PropsWithChildren>(
         iconColor="info"
         ref={ref}
         action={
-          <IconButton size="small" onClick={() => mutate()}>
+          <IconButton
+            size="small"
+            onClick={() => mutate()}
+            aria-label={t('home.components.ipInfo.labels.autoRefresh')}
+          >
             <RefreshOutlined />
           </IconButton>
         }
@@ -232,156 +196,18 @@ export const IpInfoCard = () => {
         </Box>
       )
       break
-    default: // Normal render
+    default:
       mainElement = (
-        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flex: 1,
-              overflow: 'hidden',
-            }}
-          >
-            <Box sx={{ width: '40%', overflow: 'hidden' }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  mb: 1,
-                  overflow: 'hidden',
-                }}
-              >
-                <Box
-                  component="span"
-                  sx={{
-                    fontSize: '1.5rem',
-                    mr: 1,
-                    display: 'inline-block',
-                    width: 28,
-                    textAlign: 'center',
-                    flexShrink: 0,
-                    fontFamily:
-                      getSystem() === 'windows'
-                        ? '"twemoji mozilla", sans-serif'
-                        : 'sans-serif',
-                  }}
-                >
-                  {getCountryFlag(ipInfo?.country_code)}
-                </Box>
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    fontWeight: 'medium',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    maxWidth: '100%',
-                  }}
-                >
-                  {ipInfo?.country ||
-                    t('home.components.ipInfo.labels.unknown')}
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ flexShrink: 0 }}
-                >
-                  {t('home.components.ipInfo.labels.ip')}:
-                </Typography>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    ml: 1,
-                    overflow: 'hidden',
-                    maxWidth: 'calc(100% - 30px)',
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontFamily: 'monospace',
-                      fontSize: '0.75rem',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      wordBreak: 'break-all',
-                    }}
-                  >
-                    {showIp ? ipInfo?.ip : '••••••••••'}
-                  </Typography>
-                  <IconButton size="small" onClick={toggleShowIp}>
-                    {showIp ? (
-                      <VisibilityOffOutlined fontSize="small" />
-                    ) : (
-                      <VisibilityOutlined fontSize="small" />
-                    )}
-                  </IconButton>
-                </Box>
-              </Box>
-
-              <InfoItem
-                label={t('home.components.ipInfo.labels.asn')}
-                value={ipInfo?.asn ? `AS${ipInfo.asn}` : 'N/A'}
-              />
-            </Box>
-
-            <Box sx={{ width: '60%', overflow: 'auto' }}>
-              <InfoItem
-                label={t('home.components.ipInfo.labels.isp')}
-                value={ipInfo?.organization}
-              />
-              <InfoItem
-                label={t('home.components.ipInfo.labels.org')}
-                value={ipInfo?.asn_organization}
-              />
-              <InfoItem
-                label={t('home.components.ipInfo.labels.location')}
-                value={[ipInfo?.city, ipInfo?.region]
-                  .filter(Boolean)
-                  .join(', ')}
-              />
-              <InfoItem
-                label={t('home.components.ipInfo.labels.timezone')}
-                value={ipInfo?.timezone}
-              />
-            </Box>
-          </Box>
-
-          <Box
-            sx={{
-              mt: 'auto',
-              pt: 0.5,
-              borderTop: 1,
-              borderColor: 'divider',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              opacity: 0.7,
-              fontSize: '0.7rem',
-            }}
-          >
-            <Typography variant="caption">
-              {t('home.components.ipInfo.labels.autoRefresh')}
-              {countdown.type === 'countdown'
-                ? `: ${countdown.remainingSeconds}s`
-                : '...'}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {`${ipInfo?.country_code ?? 'N/A'}, ${ipInfo?.longitude?.toFixed(2) ?? 'N/A'}, ${ipInfo?.latitude?.toFixed(2) ?? 'N/A'}`}
-            </Typography>
-          </Box>
-        </Box>
+        <IpInfoContent
+          ipInfo={ipInfo}
+          showIp={showIp}
+          onToggleIp={toggleShowIp}
+          refreshStatus={
+            countdown.type === 'countdown'
+              ? `${countdown.remainingSeconds}s`
+              : '…'
+          }
+        />
       )
   }
 
