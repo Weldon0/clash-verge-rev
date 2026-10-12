@@ -71,10 +71,26 @@ export const SettingList: React.FC<{
   title: string
   children: ReactNode
 }> = ({ title, children }) => (
-  <List>
+  <List
+    sx={{
+      py: 1,
+      '& > .MuiListItem-root': {
+        minHeight: 48,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        '&:last-child': { borderBottom: 0 },
+      },
+    }}
+  >
     <ListSubheader
       sx={[
-        { background: 'transparent', fontSize: '16px', fontWeight: '700' },
+        {
+          background: 'transparent',
+          fontSize: '13px',
+          fontWeight: 600,
+          lineHeight: '44px',
+          letterSpacing: '0.3px',
+        },
         ({ palette }) => {
           return {
             color: palette.text.primary,

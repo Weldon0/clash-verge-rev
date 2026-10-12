@@ -33,14 +33,17 @@ export const LayoutItem = (props: Props) => {
     <ListItem
       ref={sortable?.ref}
       style={sortable?.style}
-      sx={{ py: 0.5, maxWidth: 250, mx: 'auto', padding: '4px 0px' }}
+      sx={{ maxWidth: 250, mx: 'auto', padding: '2px 0' }}
     >
       <ListItemButton
         ref={sortable?.handleRef}
         selected={!!match}
+        aria-current={match ? 'page' : undefined}
         sx={[
           {
-            borderRadius: 2,
+            borderRadius: '10px',
+            minHeight: 42,
+            transition: 'background-color 160ms ease, color 160ms ease',
             marginLeft: 1.25,
             paddingLeft: 1,
             paddingRight: 1,
@@ -48,19 +51,21 @@ export const LayoutItem = (props: Props) => {
             cursor: 'pointer',
             '& .MuiListItemText-primary': {
               color: 'text.primary',
-              fontWeight: '700',
+              fontWeight: match ? 600 : 500,
+              fontSize: 13,
             },
           },
           ({ palette: { mode, primary } }) => {
             const bgcolor =
               mode === 'light'
-                ? alpha(primary.main, 0.15)
-                : alpha(primary.main, 0.35)
-            const color = mode === 'light' ? '#1f1f1f' : '#ffffff'
+                ? alpha(primary.main, 0.1)
+                : alpha(primary.main, 0.16)
+            const color = mode === 'light' ? primary.main : primary.light
             return {
               '&.Mui-selected': { bgcolor },
               '&.Mui-selected:hover': { bgcolor },
               '&.Mui-selected .MuiListItemText-primary': { color },
+              '&.Mui-selected .MuiListItemIcon-root': { color },
             }
           },
         ]}
@@ -71,8 +76,10 @@ export const LayoutItem = (props: Props) => {
         {(effectiveMenuIcon === 'monochrome' || !effectiveMenuIcon) && (
           <ListItemIcon
             sx={{
-              color: 'text.primary',
+              color: match ? 'primary.main' : 'text.secondary',
+              minWidth: 34,
               marginLeft: '6px',
+              '& svg': { fontSize: 21 },
               cursor: 'inherit',
             }}
           >
@@ -80,12 +87,14 @@ export const LayoutItem = (props: Props) => {
           </ListItemIcon>
         )}
         {effectiveMenuIcon === 'colorful' && (
-          <ListItemIcon sx={{ cursor: 'inherit' }}>{icon[1]}</ListItemIcon>
+          <ListItemIcon sx={{ cursor: 'inherit', minWidth: 40 }}>
+            {icon[1]}
+          </ListItemIcon>
         )}
         <ListItemText
           sx={{
-            textAlign: 'center',
-            marginLeft: effectiveMenuIcon === 'disable' ? '' : '-35px',
+            textAlign: 'left',
+            marginLeft: effectiveMenuIcon === 'disable' ? 1 : 0,
           }}
           primary={children}
         />

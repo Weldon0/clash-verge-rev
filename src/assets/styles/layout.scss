@@ -12,7 +12,8 @@
     overflow: hidden;
 
     &__left {
-      flex: 1 0 200px;
+      flex: 0 0 190px;
+      background: var(--background-color);
       display: flex;
       height: 100%;
       width: 100%;
@@ -70,7 +71,10 @@
       }
 
       .the-traffic {
-        flex: 0 0 60px;
+        flex: 0 0 72px;
+        padding-top: 12px;
+        border-top: 1px solid var(--divider-color);
+        font-variant-numeric: tabular-nums;
 
         > div {
           margin: 0 auto;
@@ -81,6 +85,7 @@
 
     &__right {
       position: relative;
+      min-width: 0;
       flex: 1 1 100%;
       height: 100%;
 

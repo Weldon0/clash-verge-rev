@@ -32,7 +32,8 @@ interface Props {
 
 const Widget = styled(Box)(() => ({
   padding: '3px 6px',
-  fontSize: 14,
+  fontSize: 12,
+  fontVariantNumeric: 'tabular-nums',
   borderRadius: '4px',
 }))
 
@@ -40,7 +41,7 @@ const TypeBox = styled('span')(({ theme }) => ({
   display: 'inline-block',
   border: '1px solid #ccc',
   borderColor: alpha(theme.palette.text.secondary, 0.36),
-  color: alpha(theme.palette.text.secondary, 0.42),
+  color: theme.palette.text.secondary,
   borderRadius: 4,
   fontSize: 10,
   marginRight: '4px',
@@ -72,8 +73,8 @@ export const ProxyItem = (props: Props) => {
         onClick={unresolved ? undefined : () => onClick?.(member)}
         sx={[
           { borderRadius: 1 },
-          ({ palette: { mode, primary } }) => {
-            const bgcolor = mode === 'light' ? '#ffffff' : '#24252f'
+          ({ palette: { mode, primary, background, divider } }) => {
+            const bgcolor = background.paper
             const selectColor = mode === 'light' ? primary.main : primary.light
             const showDelay = delayValue > 0
 
@@ -82,17 +83,20 @@ export const ProxyItem = (props: Props) => {
               '&:hover .the-delay': { display: showDelay ? 'block' : 'none' },
               '&:hover .the-icon': { display: 'none' },
               '&.Mui-selected': {
-                width: `calc(100% + 3px)`,
-                marginLeft: `-3px`,
-                borderLeft: `3px solid ${selectColor}`,
+                borderColor: selectColor,
                 bgcolor:
                   mode === 'light'
-                    ? alpha(primary.main, 0.15)
-                    : alpha(primary.main, 0.35),
+                    ? alpha(primary.main, 0.07)
+                    : alpha(primary.main, 0.14),
               },
               backgroundColor: bgcolor,
               marginBottom: '8px',
-              height: '40px',
+              minHeight: '52px',
+              border: `1px solid ${divider}`,
+              borderRadius: '12px',
+              transition:
+                'border-color 160ms ease, background-color 160ms ease',
+              '&.Mui-selected:hover': { bgcolor: alpha(primary.main, 0.12) },
             }
           },
         ]}

@@ -1,3 +1,8 @@
+## Personal edition
+
+- Refine navigation, proxy and subscription cards, and settings with coordinated light and dark themes.
+- Add a personal app with separate configuration and manual app updates.
+
 ## v2.5.9
 
 <details>

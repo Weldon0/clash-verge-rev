@@ -45,14 +45,17 @@ export const ProxyItemMini = (props: Props) => {
       sx={[
         {
           height: 56,
-          borderRadius: 1.5,
+          borderRadius: '12px',
+          border: '1px solid',
+          borderColor: 'divider',
+          transition: 'border-color 160ms ease, background-color 160ms ease',
           pl: 1.5,
           pr: 1,
           justifyContent: 'space-between',
           alignItems: 'center',
         },
-        ({ palette: { mode, primary } }) => {
-          const bgcolor = mode === 'light' ? '#ffffff' : '#24252f'
+        ({ palette: { mode, primary, background } }) => {
+          const bgcolor = background.paper
           const showDelay = delayValue > 0
           const selectColor = mode === 'light' ? primary.main : primary.light
 
@@ -68,15 +71,14 @@ export const ProxyItemMini = (props: Props) => {
             },
             '& .the-unpin': { filter: 'grayscale(1)' },
             '&.Mui-selected': {
-              width: `calc(100% + 3px)`,
-              marginLeft: `-3px`,
-              borderLeft: `3px solid ${selectColor}`,
+              borderColor: selectColor,
               bgcolor:
                 mode === 'light'
-                  ? alpha(primary.main, 0.15)
-                  : alpha(primary.main, 0.35),
+                  ? alpha(primary.main, 0.07)
+                  : alpha(primary.main, 0.14),
             },
             backgroundColor: bgcolor,
+            '&.Mui-selected:hover': { bgcolor: alpha(primary.main, 0.12) },
           }
         },
       ]}

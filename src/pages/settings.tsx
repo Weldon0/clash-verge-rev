@@ -9,7 +9,6 @@ import SettingSystem from '@/components/setting/setting-system'
 import SettingVergeAdvanced from '@/components/setting/setting-verge-advanced'
 import SettingVergeBasic from '@/components/setting/setting-verge-basic'
 import { showNotice } from '@/services/notice-service'
-import { useThemeMode } from '@/services/states'
 import { openExternalUrl } from '@/utils/open-external-url'
 
 const SettingPage = () => {
@@ -34,9 +33,6 @@ const SettingPage = () => {
   const toTelegramChannel = useLockFn(() =>
     openExternalUrl('https://t.me/clash_verge_re').catch(onError),
   )
-
-  const mode = useThemeMode()
-  const isDark = mode === 'light' ? false : true
 
   return (
     <BasePage
@@ -74,21 +70,27 @@ const SettingPage = () => {
         </ButtonGroup>
       }
     >
-      <Grid container spacing={1.5} columns={{ xs: 6, sm: 6, md: 12 }}>
+      <Grid container spacing={2} columns={{ xs: 6, sm: 6, md: 12 }}>
         <Grid size={6}>
           <Box
             sx={{
-              borderRadius: 2,
-              marginBottom: 1.5,
-              backgroundColor: isDark ? '#282a36' : '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid',
+              borderColor: 'divider',
+              overflow: 'hidden',
+              marginBottom: 2,
+              backgroundColor: 'background.paper',
             }}
           >
             <SettingSystem onError={onError} />
           </Box>
           <Box
             sx={{
-              borderRadius: 2,
-              backgroundColor: isDark ? '#282a36' : '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid',
+              borderColor: 'divider',
+              overflow: 'hidden',
+              backgroundColor: 'background.paper',
             }}
           >
             <SettingClash onError={onError} />
@@ -97,17 +99,23 @@ const SettingPage = () => {
         <Grid size={6}>
           <Box
             sx={{
-              borderRadius: 2,
-              marginBottom: 1.5,
-              backgroundColor: isDark ? '#282a36' : '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid',
+              borderColor: 'divider',
+              overflow: 'hidden',
+              marginBottom: 2,
+              backgroundColor: 'background.paper',
             }}
           >
             <SettingVergeBasic onError={onError} />
           </Box>
           <Box
             sx={{
-              borderRadius: 2,
-              backgroundColor: isDark ? '#282a36' : '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid',
+              borderColor: 'divider',
+              overflow: 'hidden',
+              backgroundColor: 'background.paper',
             }}
           >
             <SettingVergeAdvanced onError={onError} />

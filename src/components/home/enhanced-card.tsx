@@ -27,7 +27,6 @@ export const EnhancedCard = forwardRef<HTMLElement, EnhancedCardProps>(
     ref,
   ) => {
     const theme = useTheme()
-    const isDark = theme.palette.mode === 'dark'
 
     // 统一的标题截断样式
     const titleTruncateStyle = {
@@ -45,19 +44,22 @@ export const EnhancedCard = forwardRef<HTMLElement, EnhancedCardProps>(
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          borderRadius: 2,
-          backgroundColor: isDark ? '#282a36' : '#ffffff',
+          borderRadius: '16px',
+          border: '1px solid',
+          borderColor: 'divider',
+          overflow: 'hidden',
+          backgroundColor: 'background.paper',
         }}
         ref={ref}
       >
         <Box
           sx={{
             px: 2,
-            py: 1,
+            py: 1.5,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottom: 1,
+            borderBottom: 0,
             borderColor: 'divider',
           }}
         >
@@ -76,9 +78,9 @@ export const EnhancedCard = forwardRef<HTMLElement, EnhancedCardProps>(
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: 1.5,
-                width: 38,
-                height: 38,
-                mr: 1.5,
+                width: 32,
+                height: 32,
+                mr: 1,
                 flexShrink: 0,
                 backgroundColor: alpha(theme.palette[iconColor].main, 0.12),
                 color: theme.palette[iconColor].main,
@@ -92,8 +94,8 @@ export const EnhancedCard = forwardRef<HTMLElement, EnhancedCardProps>(
                   variant="h6"
                   sx={{
                     ...titleTruncateStyle,
-                    fontWeight: 'medium',
-                    fontSize: 18,
+                    fontWeight: 600,
+                    fontSize: 14,
                   }}
                   title={title}
                 >
@@ -112,6 +114,7 @@ export const EnhancedCard = forwardRef<HTMLElement, EnhancedCardProps>(
             display: 'flex',
             flexDirection: 'column',
             p: noContentPadding ? 0 : 2,
+            pt: noContentPadding ? 0 : 0.5,
             ...(minHeight && { minHeight }),
           }}
         >

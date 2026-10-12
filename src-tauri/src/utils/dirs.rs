@@ -9,7 +9,10 @@ use std::{
 use tauri::Manager as _;
 
 #[cfg(not(feature = "verge-dev"))]
-pub static APP_ID: &str = "io.github.clash-verge-rev.clash-verge-rev";
+pub static APP_ID: &str = match option_env!("VERGE_PERSONAL_APP_ID") {
+    Some(id) => id,
+    None => "io.github.clash-verge-rev.clash-verge-rev",
+};
 #[cfg(not(feature = "verge-dev"))]
 pub static BACKUP_DIR: &str = "clash-verge-rev-backup";
 

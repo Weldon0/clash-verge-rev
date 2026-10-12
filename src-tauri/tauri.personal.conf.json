@@ -1,0 +1,17 @@
+{
+  "productName": "Clash Verge Personal",
+  "identifier": "io.github.weldon0.clash-verge-personal",
+  "bundle": {
+    "createUpdaterArtifacts": false
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": []
+    },
+    "deep-link": {
+      "desktop": {
+        "schemes": ["clash-verge-personal"]
+      }
+    }
+  }
+}
