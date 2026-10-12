@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verge — UI Preview 02</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="workspace">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-symbol"><svg viewBox="0 0 32 32" fill="none"><path d="m5 7 11 19L27 7" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="m17 7 5 8" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></div><span>verge<span class="brand-dot">.</span></span><span class="edition">PERSONAL</span></div>
+  <div class="nav-section">工作空间</div>
+  <nav id="navigation" aria-label="主导航"></nav>
+  <div class="sidebar-bottom">
+    <div class="core-status"><span class="status-dot"></span><div><strong>Mihomo</strong><span>内核运行中</span></div><span class="core-version">v1.19.32</span></div>
+    <div class="sidebar-footer"><span class="avatar">W</span><div><strong>我的工作空间</strong><span>Personal edition</span></div><button class="icon-button" id="theme-toggle" title="切换深色模式" aria-label="切换深色模式"></button></div>
+  </div>
+</aside>
+<div class="main-shell">
+  <header class="topbar"><div class="breadcrumb"><span class="breadcrumb-mark" id="breadcrumb-icon"></span><span>工作空间</span><span class="slash">/</span><strong id="breadcrumb-title">概览</strong></div><div class="top-actions"><span class="preview-badge"><span></span>设计预览 · 示例数据</span><button id="shortcuts" class="icon-button" title="快捷键" aria-label="快捷键"></button></div></header>
+  <main id="main" tabindex="-1"></main>
+  <footer class="main-footer"><span><span class="tiny-dot"></span>所有系统运行正常</span><span>Verge Personal <span class="footer-divider">/</span> UI exploration 02</span></footer>
+</div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="dialog"><form id="profile-form"><div class="dialog-header"><div><span class="eyebrow">NEW SUBSCRIPTION</span><h2>添加订阅</h2></div><button type="button" class="icon-button" id="close-dialog" aria-label="关闭"></button></div><label class="field-label">订阅名称<input id="profile-name" placeholder="例如：日常使用" required maxlength="40"></label><label class="field-label">订阅链接<input id="profile-url" type="url" placeholder="https://example.com/subscribe" required></label><p class="muted">这是样式预览，链接仅保留在当前页面，不会发送到服务器。</p><div class="dialog-actions"><button type="button" class="button" id="cancel-dialog">取消</button><button class="button primary" type="submit">添加订阅</button></div></form></dialog>
+<script type="module" src="./app.js"></script>
+</body></html>

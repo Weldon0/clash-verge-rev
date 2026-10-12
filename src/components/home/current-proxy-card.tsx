@@ -27,6 +27,7 @@ import {
   type PopperProps,
   Tooltip,
   Typography,
+  TextField,
   alpha,
   useTheme,
 } from '@mui/material'
@@ -230,6 +231,7 @@ interface PersistentSelectProps {
   disabled: boolean
   keepOpenRef: React.RefObject<HTMLElement | null>
   onOpenChange: (open: boolean) => void
+  menuHeader?: React.ReactNode
   renderOptions: () => React.ReactNode
 }
 
@@ -241,6 +243,7 @@ const PersistentSelect = ({
   keepOpenRef,
   onOpenChange,
   renderOptions,
+  menuHeader,
 }: PersistentSelectProps) => {
   const id = useId()
   const labelId = `${id}-label`
@@ -402,6 +405,7 @@ const PersistentSelect = ({
               overflow: 'auto',
             }}
           >
+            {menuHeader}
             <MenuList
               ref={listRef}
               id={listboxId}
@@ -439,11 +443,31 @@ const PersistentProxySelect = ({
   onChange,
   ...props
 }: PersistentProxySelectProps) => {
+  const [query, setQuery] = useState('')
+  const { t } = useTranslation()
   const fixedProxyInUsed = selectedName === fixed
 
   return (
     <PersistentSelect
       {...props}
+      menuHeader={
+        <Box sx={{ p: 1 }}>
+          <TextField
+            fullWidth
+            size="small"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t('proxies.page.tooltips.filter')}
+            slotProps={{
+              htmlInput: { 'aria-label': t('proxies.page.tooltips.filter') },
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== 'Escape' && event.key !== 'Tab')
+                event.stopPropagation()
+            }}
+          />
+        </Box>
+      }
       displayValue={
         <Box
           sx={{
@@ -473,70 +497,78 @@ const PersistentProxySelect = ({
         </Box>
       }
       renderOptions={() =>
-        options.map((option) => {
-          const selected = option.value === value
-          const isFixed = option.name === fixed
-          const delay = option.disabled
-            ? -1
-            : delayManager.getDelayFix(option.member, groupName)
-
-          return (
-            <MenuItem
-              key={option.value}
-              role="option"
-              aria-selected={selected}
-              selected={selected}
-              disabled={option.disabled}
-              onClick={() => {
-                if (!option.disabled) onChange(option.value)
-              }}
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '100%',
-                pr: 1,
-              }}
-            >
-              {isFixed && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    fontSize: '12px',
-                    top: '-5px',
-                    right: '5px',
-                    ...(!fixedProxyInUsed && {
-                      filter: 'grayscale(1)',
-                    }),
-                  }}
-                >
-                  📌
-                </span>
-              )}
-              <Typography noWrap sx={{ flex: 1, mr: 1 }}>
-                {option.name}
-              </Typography>
-              {!option.disabled && (
-                <Chip
-                  size="small"
-                  label={delayManager.formatDelay(delay)}
-                  color={convertDelayColor(delay)}
-                  sx={{
-                    minWidth: '60px',
-                    height: '22px',
-                    flexShrink: 0,
-                  }}
-                />
-              )}
-            </MenuItem>
+        options
+          .filter((option) =>
+            option.name.toLowerCase().includes(query.toLowerCase()),
           )
-        })
+          .map((option) => {
+            const selected = option.value === value
+            const isFixed = option.name === fixed
+            const delay = option.disabled
+              ? -1
+              : delayManager.getDelayFix(option.member, groupName)
+
+            return (
+              <MenuItem
+                key={option.value}
+                role="option"
+                aria-selected={selected}
+                selected={selected}
+                disabled={option.disabled}
+                onClick={() => {
+                  if (!option.disabled) onChange(option.value)
+                }}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '100%',
+                  pr: 1,
+                }}
+              >
+                {isFixed && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      fontSize: '12px',
+                      top: '-5px',
+                      right: '5px',
+                      ...(!fixedProxyInUsed && {
+                        filter: 'grayscale(1)',
+                      }),
+                    }}
+                  >
+                    📌
+                  </span>
+                )}
+                <Typography noWrap sx={{ flex: 1, mr: 1 }}>
+                  {option.name}
+                </Typography>
+                {!option.disabled && (
+                  <Chip
+                    size="small"
+                    label={delayManager.formatDelay(delay)}
+                    color={convertDelayColor(delay)}
+                    sx={{
+                      minWidth: '60px',
+                      height: '22px',
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
+              </MenuItem>
+            )
+          })
       }
     />
   )
 }
 
-export const CurrentProxyCard = () => {
+export const CurrentProxyCard = ({
+  compact = false,
+}: {
+  compact?: boolean
+}) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const theme = useTheme()
@@ -974,6 +1006,110 @@ export const CurrentProxyCard = () => {
       default:
         return ''
     }
+  }
+
+  if (compact) {
+    return (
+      <Box className="personal-node-card">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 1,
+          }}
+        >
+          <Typography sx={{ fontSize: 11, color: 'text.secondary' }}>
+            {t('home.components.currentProxy.title')}
+          </Typography>
+          <IconButton
+            ref={delayButtonRef}
+            size="small"
+            onClick={handleCheckDelay}
+            disabled={isDirectMode || !unsortedProxyOptions.length}
+            aria-label={t('home.components.currentProxy.actions.refreshDelay')}
+          >
+            <NetworkCheckRounded sx={{ fontSize: 16 }} />
+          </IconButton>
+        </Box>
+        <Box className="personal-node-select">
+          <PersistentProxySelect
+            label={t('home.components.currentProxy.labels.proxy')}
+            groupName={selectedGroupName}
+            fixed={selectedGroup?.fixed}
+            value={
+              currentOption
+                ? optionValue(currentOption.memberIndex, currentOption.member)
+                : ''
+            }
+            selectedName={
+              selectedProxyName ||
+              t('home.components.currentProxy.labels.noActiveNode')
+            }
+            selectedDelay={currentDelay}
+            options={proxyOptions}
+            open={openSelect === 'proxy'}
+            disabled={isDirectMode || isCoreDataPending || !selectedGroup}
+            keepOpenRef={delayButtonRef}
+            onOpenChange={(open) => setOpenSelect(open ? 'proxy' : null)}
+            onChange={(value) => {
+              handleProxyChange(value)
+              setOpenSelect(null)
+            }}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 1,
+            mt: 1.5,
+          }}
+        >
+          <Typography sx={{ fontSize: 10, color: 'text.secondary' }}>
+            {currentProxy?.type ?? '—'}
+          </Typography>
+          <Tooltip title={getSortTooltip()}>
+            <IconButton size="small" onClick={handleSortTypeChange}>
+              {getSortIcon()}
+            </IconButton>
+          </Tooltip>
+        </Box>
+        {selectableGroups.length > 1 && !isGlobalMode && !isDirectMode && (
+          <Box sx={{ mt: 1.5 }}>
+            <PersistentSelect
+              label={t('home.components.currentProxy.labels.group')}
+              displayValue={
+                <Typography noWrap sx={{ fontSize: 11 }}>
+                  {selectedGroupName}
+                </Typography>
+              }
+              open={openSelect === 'group'}
+              disabled={false}
+              keepOpenRef={delayButtonRef}
+              onOpenChange={(open) => setOpenSelect(open ? 'group' : null)}
+              renderOptions={() =>
+                selectableGroups.map((group) => (
+                  <MenuItem
+                    key={group.name}
+                    role="option"
+                    aria-selected={group.name === selectedGroupName}
+                    selected={group.name === selectedGroupName}
+                    onClick={() => {
+                      handleGroupChange(group.name)
+                      setOpenSelect(null)
+                    }}
+                  >
+                    {group.name}
+                  </MenuItem>
+                ))
+              }
+            />
+          </Box>
+        )}
+      </Box>
+    )
   }
 
   return (

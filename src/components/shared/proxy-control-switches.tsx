@@ -24,6 +24,7 @@ interface ProxySwitchProps {
   label?: string
   onError?: (err: Error) => void
   noRightPadding?: boolean
+  compact?: boolean
 }
 
 interface SwitchRowProps {
@@ -37,6 +38,7 @@ interface SwitchRowProps {
   onToggle: (value: boolean) => Promise<boolean | void>
   onError?: (err: Error) => void
   highlight?: boolean
+  compact?: boolean
 }
 
 /**
@@ -53,6 +55,7 @@ const SwitchRow = ({
   onToggle,
   onError,
   highlight,
+  compact,
 }: SwitchRowProps) => {
   const theme = useTheme()
   const [checked, setChecked] = useState(active)
@@ -86,8 +89,10 @@ const SwitchRow = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        p: 1,
-        pr: 2,
+        p: compact ? '14px 0' : 1,
+        pr: compact ? 0 : 2,
+        borderBottom: compact ? '1px solid' : undefined,
+        borderColor: 'divider',
         borderRadius: 1.5,
         bgcolor: highlight
           ? alpha(theme.palette.success.main, 0.07)
@@ -97,14 +102,15 @@ const SwitchRow = ({
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {active ? (
-          <PlayCircleOutlineRounded sx={{ color: 'success.main', mr: 1 }} />
-        ) : (
-          <PauseCircleOutlineRounded sx={{ color: 'text.disabled', mr: 1 }} />
-        )}
+        {!compact &&
+          (active ? (
+            <PlayCircleOutlineRounded sx={{ color: 'success.main', mr: 1 }} />
+          ) : (
+            <PauseCircleOutlineRounded sx={{ color: 'text.disabled', mr: 1 }} />
+          ))}
         <Typography
           variant="subtitle1"
-          sx={{ fontWeight: 500, fontSize: '15px' }}
+          sx={{ fontWeight: 500, fontSize: compact ? '12px' : '15px' }}
         >
           {label}
         </Typography>
@@ -131,6 +137,7 @@ const ProxyControlSwitches = ({
   label,
   onError,
   noRightPadding = false,
+  compact = false,
 }: ProxySwitchProps) => {
   const { t } = useTranslation()
   const { verge, mutateVerge, patchVerge } = useVerge()
@@ -183,6 +190,7 @@ const ProxyControlSwitches = ({
     <Box sx={{ width: '100%', pr: noRightPadding ? 1 : 2 }}>
       {isSystemProxyMode && (
         <SwitchRow
+          compact={compact}
           label={t('settings.sections.proxyControl.fields.systemProxy')}
           active={systemProxyIndicator}
           infoTitle={t('settings.sections.proxyControl.tooltips.systemProxy')}
@@ -195,6 +203,7 @@ const ProxyControlSwitches = ({
 
       {isTunMode && (
         <SwitchRow
+          compact={compact}
           label={t('settings.sections.proxyControl.fields.tunMode')}
           active={(enable_tun_mode && isTunModeAvailable) || false}
           infoTitle={t('settings.sections.proxyControl.tooltips.tunMode')}

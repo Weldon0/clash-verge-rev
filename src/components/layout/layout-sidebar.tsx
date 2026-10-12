@@ -1,11 +1,8 @@
 import { DragDropProvider, KeyboardSensor, PointerSensor } from '@dnd-kit/react'
-import { Box, List, Menu, MenuItem, SvgIcon } from '@mui/material'
+import { Box, List, Menu, MenuItem } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import iconDark from '@/assets/image/icon_dark.svg?react'
-import iconLight from '@/assets/image/icon_light.svg?react'
-import LogoSvg from '@/assets/image/logo.svg?react'
 import { useVerge } from '@/hooks/use-verge'
 import { useNavMenuOrder } from '@/pages/_layout/hooks'
 import { navItems } from '@/pages/_navigation'
@@ -14,6 +11,7 @@ import { SortableItem } from '../base'
 
 import { LayoutItem } from './layout-item'
 import { LayoutTraffic } from './layout-traffic'
+import { PersonalIcon } from './personal-icon'
 import { UpdateButton } from './update-button'
 
 type MenuContextPosition = { top: number; left: number }
@@ -125,26 +123,20 @@ export const LayoutSidebar = (props: LayoutSidebarProps) => {
     <div className="layout-content__left">
       {/* Logo */}
       <div className="the-logo" data-tauri-drag-region="false">
-        <div
-          data-tauri-drag-region="true"
-          style={{
-            height: '27px',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <SvgIcon
-            component={isDark ? iconDark : iconLight}
-            style={{
-              height: '36px',
-              width: '36px',
-              marginTop: '-3px',
-              marginRight: '5px',
-              marginLeft: '-3px',
-            }}
-            inheritViewBox
-          />
-          <LogoSvg fill={isDark ? 'white' : 'black'} />
+        <div className="personal-brand" data-tauri-drag-region="true">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path
+              d="m5 7 11 19L27 7m-10 0 5 8"
+              stroke="currentColor"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span>
+            verge<span className="personal-brand-dot">.</span>
+          </span>
+          <small>PERSONAL</small>
         </div>
         <UpdateButton className="the-newbtn" />
       </div>
@@ -222,6 +214,23 @@ export const LayoutSidebar = (props: LayoutSidebarProps) => {
         </MenuItem>
       </Menu>
 
+      <div className="personal-sidebar-footer">
+        <span className="personal-avatar">W</span>
+        <div>
+          <strong>Verge Personal</strong>
+          <small>Personal edition</small>
+        </div>
+        <button
+          className="personal-theme-button"
+          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={isDark ? 'Light' : 'Dark'}
+          onClick={() =>
+            void patchVerge({ theme_mode: isDark ? 'light' : 'dark' })
+          }
+        >
+          <PersonalIcon name={isDark ? 'sun' : 'moon'} />
+        </button>
+      </div>
       {/* Traffic */}
       <div className="the-traffic">
         <LayoutTraffic />

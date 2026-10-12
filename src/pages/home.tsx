@@ -1,10 +1,7 @@
 import {
-  DnsOutlined,
   HelpOutlineRounded,
   HistoryEduOutlined,
-  RouterOutlined,
   SettingsOutlined,
-  SpeedOutlined,
 } from '@mui/icons-material'
 import {
   Box,
@@ -16,22 +13,24 @@ import {
   DialogTitle,
   FormControlLabel,
   FormGroup,
-  Grid,
   IconButton,
   Skeleton,
   Tooltip,
+  Typography,
 } from '@mui/material'
 import { useLockFn } from 'ahooks'
-import { Suspense, lazy, useCallback, useMemo, useState } from 'react'
+import { Suspense, lazy, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { BasePage } from '@/components/base'
 import { ClashModeCard } from '@/components/home/clash-mode-card'
 import { CurrentProxyCard } from '@/components/home/current-proxy-card'
-import { EnhancedCard } from '@/components/home/enhanced-card'
-import { EnhancedTrafficStats } from '@/components/home/enhanced-traffic-stats'
 import { HomeProfileCard } from '@/components/home/home-profile-card'
-import { ProxyTunCard } from '@/components/home/proxy-tun-card'
+import {
+  PersonalTrafficMetric,
+  PersonalTrafficChart,
+} from '@/components/home/personal-traffic'
+import ProxyControlSwitches from '@/components/shared/proxy-control-switches'
 import { useProfiles } from '@/hooks/use-profiles'
 import { useVerge } from '@/hooks/use-verge'
 import { entry_lightweight_mode } from '@/services/cmds'
@@ -93,9 +92,9 @@ const DEFAULT_HOME_CARDS: HomeCardsSettings = {
   network: true,
   mode: true,
   traffic: true,
-  clashinfo: true,
-  systeminfo: true,
-  test: true,
+  clashinfo: false,
+  systeminfo: false,
+  test: false,
   ip: true,
 }
 
@@ -254,72 +253,6 @@ const HomePage = () => {
     setSettingsOpen(true)
   }, [])
 
-  const renderCard = useCallback(
-    (cardKey: string, component: React.ReactNode, size: number = 6) => {
-      if (!homeCards[cardKey]) return null
-
-      return (
-        <Grid size={size} key={cardKey}>
-          {component}
-        </Grid>
-      )
-    },
-    [homeCards],
-  )
-
-  const criticalCards = useMemo(
-    () => [
-      renderCard(
-        'profile',
-        <HomeProfileCard current={current} onProfileUpdated={mutateProfiles} />,
-      ),
-      renderCard('proxy', <CurrentProxyCard />),
-      renderCard('network', <NetworkSettingsCard />),
-      renderCard('mode', <ClashModeEnhancedCard />),
-    ],
-    [current, mutateProfiles, renderCard],
-  )
-
-  const nonCriticalCards = useMemo(
-    () => [
-      renderCard(
-        'traffic',
-        <EnhancedCard
-          title={t('home.page.cards.trafficStats')}
-          icon={<SpeedOutlined />}
-          iconColor="secondary"
-        >
-          <EnhancedTrafficStats />
-        </EnhancedCard>,
-        12,
-      ),
-      renderCard(
-        'test',
-        <Suspense fallback={<Skeleton variant="rectangular" height={200} />}>
-          <LazyTestCard />
-        </Suspense>,
-      ),
-      renderCard(
-        'ip',
-        <Suspense fallback={<Skeleton variant="rectangular" height={200} />}>
-          <LazyIpInfoCard />
-        </Suspense>,
-      ),
-      renderCard(
-        'clashinfo',
-        <Suspense fallback={<Skeleton variant="rectangular" height={200} />}>
-          <LazyClashInfoCard />
-        </Suspense>,
-      ),
-      renderCard(
-        'systeminfo',
-        <Suspense fallback={<Skeleton variant="rectangular" height={200} />}>
-          <LazySystemInfoCard />
-        </Suspense>,
-      ),
-    ],
-    [t, renderCard],
-  )
   return (
     <BasePage
       title={t('home.page.title')}
@@ -353,11 +286,89 @@ const HomePage = () => {
         </Box>
       }
     >
-      <Grid container spacing={2} columns={{ xs: 6, sm: 6, md: 12 }}>
-        {criticalCards}
-
-        {nonCriticalCards}
-      </Grid>
+      <div className="personal-overview">
+        <div className="personal-overview-top">
+          {homeCards.proxy && <CurrentProxyCard compact />}
+          {homeCards.traffic && (
+            <>
+              <PersonalTrafficMetric direction="down" />
+              <PersonalTrafficMetric direction="up" />
+            </>
+          )}
+        </div>
+        <div className="personal-overview-middle">
+          {homeCards.traffic && <PersonalTrafficChart />}
+          {(homeCards.network || homeCards.mode) && (
+            <Box className="personal-quick-card">
+              <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 2 }}>
+                {t('home.page.cards.networkSettings')}
+              </Typography>
+              {homeCards.network && (
+                <>
+                  <ProxyControlSwitches
+                    compact
+                    noRightPadding
+                    label={t('settings.sections.system.toggles.systemProxy')}
+                    onError={showNotice.error}
+                  />
+                  <ProxyControlSwitches
+                    compact
+                    noRightPadding
+                    label={t('settings.sections.system.toggles.tunMode')}
+                    onError={showNotice.error}
+                  />
+                </>
+              )}
+              {homeCards.mode && (
+                <>
+                  <Typography sx={{ fontSize: 12, mt: 2, mb: 1.5 }}>
+                    {t('home.page.cards.proxyMode')}
+                  </Typography>
+                  <ClashModeCard compact />
+                </>
+              )}
+            </Box>
+          )}
+        </div>
+        <div className="personal-overview-bottom">
+          {homeCards.profile && (
+            <HomeProfileCard
+              current={current}
+              onProfileUpdated={mutateProfiles}
+            />
+          )}
+          {homeCards.ip && (
+            <Suspense
+              fallback={<Skeleton variant="rectangular" height={160} />}
+            >
+              <LazyIpInfoCard />
+            </Suspense>
+          )}
+        </div>
+        <div className="personal-overview-extras">
+          {homeCards.test && (
+            <Suspense
+              fallback={<Skeleton variant="rectangular" height={200} />}
+            >
+              <LazyTestCard />
+            </Suspense>
+          )}
+          {homeCards.clashinfo && (
+            <Suspense
+              fallback={<Skeleton variant="rectangular" height={200} />}
+            >
+              <LazyClashInfoCard />
+            </Suspense>
+          )}
+          {homeCards.systeminfo && (
+            <Suspense
+              fallback={<Skeleton variant="rectangular" height={200} />}
+            >
+              <LazySystemInfoCard />
+            </Suspense>
+          )}
+        </div>
+      </div>
 
       {/* 首页设置弹窗 */}
       {settingsOpen && (
@@ -368,36 +379,6 @@ const HomePage = () => {
         />
       )}
     </BasePage>
-  )
-}
-
-// 增强版网络设置卡片组件
-const NetworkSettingsCard = () => {
-  const { t } = useTranslation()
-  return (
-    <EnhancedCard
-      title={t('home.page.cards.networkSettings')}
-      icon={<DnsOutlined />}
-      iconColor="primary"
-      action={null}
-    >
-      <ProxyTunCard />
-    </EnhancedCard>
-  )
-}
-
-// 增强版 Clash 模式卡片组件
-const ClashModeEnhancedCard = () => {
-  const { t } = useTranslation()
-  return (
-    <EnhancedCard
-      title={t('home.page.cards.proxyMode')}
-      icon={<RouterOutlined />}
-      iconColor="info"
-      action={null}
-    >
-      <ClashModeCard />
-    </EnhancedCard>
   )
 }
 

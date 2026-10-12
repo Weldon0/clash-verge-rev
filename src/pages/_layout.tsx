@@ -3,11 +3,12 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, useNavigate } from 'react-router'
+import { Outlet, useLocation, useNavigate } from 'react-router'
 
 import { BaseErrorBoundary } from '@/components/base'
 import { LayoutSidebar } from '@/components/layout/layout-sidebar'
 import { NoticeManager } from '@/components/layout/notice-manager'
+import { PersonalIcon } from '@/components/layout/personal-icon'
 import { ServiceMigrationDialog } from '@/components/layout/service-migration-dialog'
 import { SysproxyPrivilegeDialog } from '@/components/layout/sysproxy-privilege-dialog'
 import {
@@ -17,6 +18,7 @@ import {
 import { useI18n } from '@/hooks/use-i18n'
 import { useVerge } from '@/hooks/use-verge'
 import { useWindowDecorations } from '@/hooks/use-window'
+import { navigationItems } from '@/pages/_navigation-meta'
 import { useEventBus } from '@/services/bus'
 import { handleNoticeMessage } from '@/services/notice-handlers'
 import { useThemeMode } from '@/services/states'
@@ -45,6 +47,23 @@ const Layout = () => {
   const navCollapsed = verge?.collapse_navbar ?? false
   const { switchLanguage } = useI18n()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const activeNavigation = Object.entries(navigationItems).find(
+    ([, item]) => item.path === pathname,
+  )
+  const activeLabel = activeNavigation
+    ? t(activeNavigation[1].label)
+    : 'Verge Personal'
+  const iconNames: Record<string, string> = {
+    home: 'overview',
+    proxies: 'nodes',
+    profiles: 'profiles',
+    connections: 'connections',
+    rules: 'rules',
+    logs: 'logs',
+    unlock: 'unlock',
+    settings: 'settings',
+  }
   const themeReady = useMemo(() => Boolean(theme), [theme])
   const windowControlsRef = useRef<any>(null)
   const { decorated } = useWindowDecorations()
@@ -163,7 +182,17 @@ const Layout = () => {
           <LayoutSidebar isDark={isDark} isCollapsed={navCollapsed} />
 
           <div className="layout-content__right">
-            <div className="the-bar"></div>
+            <div className="personal-topbar" data-tauri-drag-region="true">
+              <div>
+                <PersonalIcon
+                  name={iconNames[activeNavigation?.[0] ?? 'home']}
+                />
+                <span>Verge Personal</span>
+                <span className="personal-slash">/</span>
+                <strong>{activeLabel}</strong>
+              </div>
+              <span className="personal-edition">PERSONAL EDITION</span>
+            </div>
             <div className="the-content">
               <BaseErrorBoundary>
                 <Outlet />

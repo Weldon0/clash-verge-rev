@@ -3,7 +3,7 @@ import {
   LanguageRounded,
   MultipleStopRounded,
 } from '@mui/icons-material'
-import { Box, Paper, Stack, Typography } from '@mui/material'
+import { Box, Button, Paper, Stack, Typography } from '@mui/material'
 import { useLockFn } from 'ahooks'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -56,7 +56,7 @@ const MODE_ICONS: Record<ClashMode, ReactNode> = {
   direct: <DirectionsRounded fontSize="small" />,
 }
 
-export const ClashModeCard = () => {
+export const ClashModeCard = ({ compact = false }: { compact?: boolean }) => {
   const { t } = useTranslation()
   const { clashConfig } = useClashConfigData()
   const { isCoreDataPending } = useCoreDataStatus()
@@ -158,6 +158,43 @@ export const ClashModeCard = () => {
     wordBreak: 'break-word',
     hyphens: 'auto',
   }
+
+  if (compact)
+    return (
+      <Box
+        role="group"
+        aria-label={t('home.page.cards.proxyMode')}
+        sx={{
+          display: 'flex',
+          p: 0.5,
+          borderRadius: 2,
+          bgcolor: 'background.default',
+          border: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        {CLASH_MODES.map((mode) => (
+          <Button
+            key={mode}
+            size="small"
+            aria-pressed={mode === currentMode}
+            disabled={!currentMode}
+            onClick={() => onChangeMode(mode)}
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              fontSize: 11,
+              color: mode === currentMode ? 'text.primary' : 'text.secondary',
+              bgcolor:
+                mode === currentMode ? 'background.paper' : 'transparent',
+              borderRadius: 1.5,
+            }}
+          >
+            {t(MODE_META[mode].label)}
+          </Button>
+        ))}
+      </Box>
+    )
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>

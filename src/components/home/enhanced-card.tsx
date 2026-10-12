@@ -1,4 +1,4 @@
-import { Box, Typography, alpha, useTheme } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import React, { forwardRef, ReactNode } from 'react'
 
 // 自定义卡片组件接口
@@ -15,19 +15,9 @@ interface EnhancedCardProps {
 // 自定义卡片组件
 export const EnhancedCard = forwardRef<HTMLElement, EnhancedCardProps>(
   (
-    {
-      title,
-      icon,
-      action,
-      children,
-      iconColor = 'primary',
-      minHeight,
-      noContentPadding = false,
-    },
+    { title, icon, action, children, minHeight, noContentPadding = false },
     ref,
   ) => {
-    const theme = useTheme()
-
     // 统一的标题截断样式
     const titleTruncateStyle = {
       minWidth: 0,
@@ -44,10 +34,11 @@ export const EnhancedCard = forwardRef<HTMLElement, EnhancedCardProps>(
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          borderRadius: '16px',
+          borderRadius: '14px',
           border: '1px solid',
           borderColor: 'divider',
           overflow: 'hidden',
+          boxShadow: '0 2px 5px #20293804',
           backgroundColor: 'background.paper',
         }}
         ref={ref}
@@ -78,12 +69,13 @@ export const EnhancedCard = forwardRef<HTMLElement, EnhancedCardProps>(
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: 1.5,
-                width: 32,
-                height: 32,
+                width: 18,
+                height: 18,
                 mr: 1,
                 flexShrink: 0,
-                backgroundColor: alpha(theme.palette[iconColor].main, 0.12),
-                color: theme.palette[iconColor].main,
+                boxShadow: '0 2px 5px #20293804',
+                color: 'text.secondary',
+                '& svg': { width: 17, height: 17 },
               }}
             >
               {icon}

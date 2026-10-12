@@ -1,5 +1,4 @@
 import {
-  alpha,
   ListItem,
   ListItemButton,
   ListItemIcon,
@@ -42,32 +41,35 @@ export const LayoutItem = (props: Props) => {
         sx={[
           {
             borderRadius: '10px',
-            minHeight: 42,
+            minHeight: 44,
             transition: 'background-color 160ms ease, color 160ms ease',
-            marginLeft: 1.25,
+            marginLeft: 2,
             paddingLeft: 1,
             paddingRight: 1,
-            marginRight: 1.25,
+            marginRight: 2,
             cursor: 'pointer',
             '& .MuiListItemText-primary': {
-              color: 'text.primary',
-              fontWeight: match ? 600 : 500,
+              color: match ? 'text.primary' : 'text.secondary',
+              fontWeight: 500,
               fontSize: 13,
             },
           },
-          ({ palette: { mode, primary } }) => {
-            const bgcolor =
-              mode === 'light'
-                ? alpha(primary.main, 0.1)
-                : alpha(primary.main, 0.16)
-            const color = mode === 'light' ? primary.main : primary.light
-            return {
-              '&.Mui-selected': { bgcolor },
-              '&.Mui-selected:hover': { bgcolor },
-              '&.Mui-selected .MuiListItemText-primary': { color },
-              '&.Mui-selected .MuiListItemIcon-root': { color },
-            }
-          },
+          ({ palette }) => ({
+            '&.Mui-selected, &.Mui-selected:hover': {
+              bgcolor: palette.mode === 'light' ? '#ffffff' : '#282d36',
+              boxShadow: '0 2px 5px #20293808',
+            },
+            '&.Mui-selected .MuiListItemIcon-root': { color: 'primary.main' },
+            '&.Mui-selected::after': {
+              content: '""',
+              width: 4,
+              height: 4,
+              borderRadius: '50%',
+              backgroundColor: palette.primary.main,
+              marginLeft: 'auto',
+              flexShrink: 0,
+            },
+          }),
         ]}
         title={navCollapsed ? children : undefined}
         aria-label={navCollapsed ? children : undefined}
@@ -79,7 +81,7 @@ export const LayoutItem = (props: Props) => {
               color: match ? 'primary.main' : 'text.secondary',
               minWidth: 34,
               marginLeft: '6px',
-              '& svg': { fontSize: 21 },
+              '& svg': { width: 18, height: 18 },
               cursor: 'inherit',
             }}
           >

@@ -49,8 +49,8 @@ interface TooltipData {
 
 const MAX_POINTS = 300
 const TARGET_FPS = 15
-const LINE_WIDTH_UP = 2.5
-const LINE_WIDTH_DOWN = 2.5
+const LINE_WIDTH_UP = 1.5
+const LINE_WIDTH_DOWN = 1.8
 const LINE_WIDTH_GRID = 0.5
 const ALPHA_GRADIENT = 0.15
 const ALPHA_LINE = 0.9
@@ -146,8 +146,8 @@ export const EnhancedCanvasTrafficGraph = memo(
 
     const colors = useMemo(
       () => ({
-        up: theme.palette.secondary.main,
-        down: theme.palette.primary.main,
+        up: theme.palette.primary.main,
+        down: theme.palette.mode === 'light' ? '#404c62' : '#a8b5cc',
         grid: theme.palette.divider,
         text: theme.palette.text.secondary,
         background: theme.palette.background.paper,
@@ -1173,10 +1173,10 @@ export const EnhancedCanvasTrafficGraph = memo(
               <Box sx={{ color: 'text.secondary', mb: 0.2 }}>
                 {tooltipData.timestamp}
               </Box>
-              <Box sx={{ color: 'secondary.main', fontWeight: 500 }}>
+              <Box sx={{ color: colors.up, fontWeight: 500 }}>
                 ↑ {tooltipData.upSpeed}
               </Box>
-              <Box sx={{ color: 'primary.main', fontWeight: 500 }}>
+              <Box sx={{ color: colors.down, fontWeight: 500 }}>
                 ↓ {tooltipData.downSpeed}
               </Box>
             </Box>

@@ -1,6 +1,7 @@
 import { GitHub, HelpOutlineRounded, Telegram } from '@mui/icons-material'
-import { Box, ButtonGroup, IconButton, Grid } from '@mui/material'
+import { Box, Button, ButtonGroup, IconButton } from '@mui/material'
 import { useLockFn } from 'ahooks'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { BasePage } from '@/components/base'
@@ -13,6 +14,30 @@ import { openExternalUrl } from '@/utils/open-external-url'
 
 const SettingPage = () => {
   const { t } = useTranslation()
+  const [section, setSection] = useState('appearance')
+  const sections = [
+    {
+      id: 'appearance',
+      label: t('settings.components.verge.basic.title'),
+      Component: SettingVergeBasic,
+    },
+    {
+      id: 'system',
+      label: t('settings.sections.system.title'),
+      Component: SettingSystem,
+    },
+    {
+      id: 'clash',
+      label: t('settings.sections.clash.title'),
+      Component: SettingClash,
+    },
+    {
+      id: 'advanced',
+      label: t('settings.components.verge.advanced.title'),
+      Component: SettingVergeAdvanced,
+    },
+  ]
+  const ActiveSection = sections.find((item) => item.id === section)!.Component
 
   const onError = (err: any) => {
     showNotice.error(err)
@@ -70,58 +95,22 @@ const SettingPage = () => {
         </ButtonGroup>
       }
     >
-      <Grid container spacing={2} columns={{ xs: 6, sm: 6, md: 12 }}>
-        <Grid size={6}>
-          <Box
-            sx={{
-              borderRadius: '16px',
-              border: '1px solid',
-              borderColor: 'divider',
-              overflow: 'hidden',
-              marginBottom: 2,
-              backgroundColor: 'background.paper',
-            }}
-          >
-            <SettingSystem onError={onError} />
-          </Box>
-          <Box
-            sx={{
-              borderRadius: '16px',
-              border: '1px solid',
-              borderColor: 'divider',
-              overflow: 'hidden',
-              backgroundColor: 'background.paper',
-            }}
-          >
-            <SettingClash onError={onError} />
-          </Box>
-        </Grid>
-        <Grid size={6}>
-          <Box
-            sx={{
-              borderRadius: '16px',
-              border: '1px solid',
-              borderColor: 'divider',
-              overflow: 'hidden',
-              marginBottom: 2,
-              backgroundColor: 'background.paper',
-            }}
-          >
-            <SettingVergeBasic onError={onError} />
-          </Box>
-          <Box
-            sx={{
-              borderRadius: '16px',
-              border: '1px solid',
-              borderColor: 'divider',
-              overflow: 'hidden',
-              backgroundColor: 'background.paper',
-            }}
-          >
-            <SettingVergeAdvanced onError={onError} />
-          </Box>
-        </Grid>
-      </Grid>
+      <div className="personal-settings">
+        <nav aria-label={t('settings.page.title')}>
+          {sections.map((item) => (
+            <Button
+              key={item.id}
+              aria-current={section === item.id ? 'page' : undefined}
+              onClick={() => setSection(item.id)}
+            >
+              {item.label}
+            </Button>
+          ))}
+        </nav>
+        <Box className="personal-setting-panel">
+          <ActiveSection onError={onError} />
+        </Box>
+      </div>
     </BasePage>
   )
 }

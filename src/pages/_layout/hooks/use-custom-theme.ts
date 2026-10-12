@@ -153,6 +153,7 @@ export const useCustomTheme = () => {
         },
         palette: {
           mode,
+          divider: mode === 'light' ? '#e8eaf0' : '#333842',
           primary: { main: setting.primary_color || dt.primary_color },
           secondary: { main: setting.secondary_color || dt.secondary_color },
           info: { main: setting.info_color || dt.info_color },
@@ -168,7 +169,7 @@ export const useCustomTheme = () => {
             default: dt.background_color,
           },
         },
-        shape: { borderRadius: 12 },
+        shape: { borderRadius: 14 },
         components: {
           MuiButton: {
             defaultProps: { disableElevation: true },
@@ -213,6 +214,7 @@ export const useCustomTheme = () => {
         },
         shadows: Array(25).fill('none') as Shadows,
         typography: {
+          fontSize: 13,
           fontFamily: setting.font_family
             ? `${setting.font_family}, ${dt.font_family}`
             : dt.font_family,
@@ -226,6 +228,7 @@ export const useCustomTheme = () => {
         },
         palette: {
           mode,
+          divider: mode === 'light' ? '#e8eaf0' : '#333842',
           primary: { main: dt.primary_color },
           secondary: { main: dt.secondary_color },
           info: { main: dt.info_color },
@@ -252,6 +255,14 @@ export const useCustomTheme = () => {
       rootEle.style.setProperty('--divider-color', dividerColor)
       rootEle.style.setProperty('--background-color', backgroundColor)
       rootEle.style.setProperty('--surface-color', dt.surface_color)
+      rootEle.style.setProperty(
+        '--sidebar-color',
+        mode === 'light' ? '#f1f2f5' : '#191c21',
+      )
+      rootEle.style.setProperty(
+        '--text-secondary',
+        muiTheme.palette.text.secondary,
+      )
       rootEle.style.setProperty('--text-primary', muiTheme.palette.text.primary)
       rootEle.style.setProperty('--selection-color', selectColor)
       rootEle.style.setProperty('--scroller-color', scrollColor)
